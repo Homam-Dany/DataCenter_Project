@@ -92,18 +92,19 @@
         <p>Gestion intelligente et réservation de ressources pour votre Data Center.</p>
 
         <div class="btn-group">
-            @if (Route::has('login'))
-                @auth
-                    <a href="{{ url('/dashboard') }}" class="btn-welcome btn-primary-welcome">Aller au Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}" class="btn-welcome btn-primary-welcome">Se connecter</a>
-                    
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}" class="btn-welcome btn-outline-welcome">Demander un compte</a>
-                    @endif
-                @endauth
+    @if (Route::has('login'))
+        @auth
+            <a href="{{ url('/dashboard') }}" class="btn-welcome btn-primary-welcome">Accéder à mon Espace</a>
+        @else
+            <a href="{{ route('login') }}" class="btn-welcome btn-primary-welcome">Se connecter</a>
+            
+            @if (Route::has('register'))
+                {{-- Point 1.2 de l'énoncé : Déposer une demande d’ouverture de compte --}}
+                <a href="{{ route('register') }}" class="btn-welcome btn-outline-welcome">Demander l'ouverture d'un compte</a>
             @endif
-        </div>
+        @endauth
+    @endif
+</div>
 
         <a href="{{ route('resources.index') }}" class="guest-link">
             Continuer en tant qu'invité (Consulter le catalogue)

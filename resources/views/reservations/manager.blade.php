@@ -1,48 +1,65 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="main-content">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
-        <div>
-            <h1 style="font-size: 3rem; margin: 0;">Cluster <span style="color: var(--accent-cyan);">Management</span></h1>
-            <p style="color: var(--text-dim); font-size: 1.1rem;">Supervision technique du parc informatique.</p>
+<div class="container" style="margin-top: 30px; color: white; padding: 20px;">
+    <h1 style="margin-bottom: 25px;">Gestion des <span style="color: #818cf8;">Demandes</span></h1>
+
+    @if(session('success'))
+        <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            {{ session('success') }}
         </div>
-        <a href="{{ route('resources.create') }}" class="btn btn-primary">+ New Resource</a>
-    </div>
+    @endif
 
-    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
-        @foreach($resources as $resource)
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <span style="color: var(--accent-cyan); font-family: monospace; letter-spacing: 2px;">{{ strtoupper($resource->type) }}</span>
-                <div style="width: 12px; height: 12px; border-radius: 50%; background: {{ $resource->status === 'disponible' ? 'var(--accent-green)' : 'var(--accent-orange)' }}; box-shadow: 0 0 10px {{ $resource->status === 'disponible' ? 'var(--accent-green)' : 'var(--accent-orange)' }};"></div>
-            </div>
-
-            <h2 style="font-size: 1.8rem; margin-bottom: 20px; letter-spacing: -0.5px;">{{ $resource->name }}</h2>
-
-            <div style="background: rgba(0,0,0,0.2); border-radius: 12px; padding: 15px; margin-bottom: 25px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="color: var(--text-dim);">Processing Units</span>
-                    <span style="font-weight: bold;">{{ $resource->cpu }} Cores</span>
+    <div style="display: flex; flex-direction: column; gap: 30px;">
+        @forelse($pendingReservations as $res)
+            <div style="background: #1e293b; border: 2px solid #334155; padding: 25px; border-radius: 12px;">
+                <div style="margin-bottom: 20px;">
+                    <h2 style="color: #818cf8; margin: 0;">{{ $res->resource->name }}</h2>
+                    <p style="margin-top: 5px;">Demandeur : <strong>{{ $res->user->name }}</strong></p>
+                    
+                    {{-- Affichage clair de la justification pour le responsable --}}
+                    <div style="margin-top: 15px; background: rgba(0,0,0,0.3); border-left: 4px solid #818cf8; padding: 15px; border-radius: 5px;">
+                        <strong style="color: #818cf8; display: block; margin-bottom: 5px; font-size: 0.8rem; text-transform: uppercase;">Justification du client :</strong>
+                        <p style="font-style: italic; color: #cbd5e1; margin: 0; line-height: 1.5;">
+                            "{{ $res->justification }}"
+                        </p>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <span style="color: var(--text-dim);">Memory Capacity</span>
-                    <span style="font-weight: bold;">{{ $resource->ram }} GB</span>
+
+                <div style="border-top: 1px solid #334155; padding-top: 20px;">
+                    <form action="{{ route('reservations.decide', ['id' => $res->id, 'action' => 'accepter']) }}" method="POST" style="margin-bottom: 15px;">
+                        @csrf
+                        <button type="submit" style="background: #10b981; color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%;">
+                            ✅ ACCEPTER LA DEMANDE
+                        </button>
+                    </form>
+
+                    <form action="{{ route('reservations.decide', ['id' => $res->id, 'action' => 'refuser']) }}" method="POST">
+                        @csrf
+                        <label for="reason_{{ $res->id }}" style="display: block; color: #f43f5e; font-weight: bold; margin-bottom: 8px;">
+                            Justification du refus obligatoire :
+                        </label>
+                        
+                        <textarea 
+                            id="reason_{{ $res->id }}"
+                            name="rejection_reason" 
+                            required 
+                            placeholder="Saisissez la raison du refus..." 
+                            style="width: 100%; background: #0f172a; border: 1px solid #f43f5e; color: white; padding: 12px; border-radius: 8px; min-height: 80px; margin-bottom: 5px; outline: none;"></textarea>
+                        
+                        @error('rejection_reason')
+                            <p style="color: #f43f5e; font-size: 0.85rem; margin-bottom: 10px;">{{ $message }}</p>
+                        @enderror
+
+                        <button type="submit" style="background: #f43f5e; color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; width: 100%;">
+                            ❌ CONFIRMER LE REFUS
+                        </button>
+                    </form>
                 </div>
             </div>
-
-            <div style="display: flex; gap: 15px; border-top: 1px solid var(--glass-border); padding-top: 20px;">
-                <form action="{{ route('resources.toggleMaintenance', $resource->id) }}" method="POST" style="flex: 1;">
-                    @csrf
-                    @method('PATCH')
-                    <button type="submit" class="btn {{ $resource->status === 'maintenance' ? 'btn-success' : 'btn-warning' }}" style="width: 100%;">
-                        {{ $resource->status === 'maintenance' ? 'Online' : 'Maintenance' }}
-                    </button>
-                </form>
-                <a href="{{ route('resources.edit', $resource->id) }}" class="btn" style="border: 1px solid var(--glass-border); color: var(--text-dim);">Edit</a>
-            </div>
-        </div>
-        @endforeach
+        @empty
+            <p style="text-align: center; color: #94a3b8;">Aucune demande en attente.</p>
+        @endforelse
     </div>
 </div>
 @endsection

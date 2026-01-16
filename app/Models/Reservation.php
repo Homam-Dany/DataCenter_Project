@@ -14,7 +14,7 @@ class Reservation extends Model
         'resource_id',
         'start_date',
         'end_date',
-        'status', // en_attente, Approuvée, Refusée, Active, Terminée
+        'status',
         'justification',
         'rejection_reason'
     ];
@@ -27,10 +27,6 @@ class Reservation extends Model
     public function resource() { return $this->belongsTo(Resource::class); }
     public function user() { return $this->belongsTo(User::class); }
 
-    /**
-     * LOGIQUE PROFESSIONNELLE : Vérification des chevauchements (Overlapping)
-     * Cette fonction empêche de réserver une ressource déjà prise.
-     */
     public function scopeOverlapping($query, $resourceId, $startDate, $endDate)
     {
         return $query->where('resource_id', $resourceId)
@@ -41,5 +37,11 @@ class Reservation extends Model
                                    ->where('end_date', '>', $startDate);
                          });
                      });
+    }
+
+    public function isExpired() { return $this->end_date->isPast(); }
+
+    public function isActive() {
+        return $this->start_date->isPast() && $this->end_date->isFuture() && $this->status === 'Approuvée';
     }
 }

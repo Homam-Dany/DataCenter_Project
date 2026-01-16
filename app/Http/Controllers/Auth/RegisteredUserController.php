@@ -8,27 +8,21 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+// Importation pour les notifications
+use Illuminate\Support\Facades\Notification; 
+use App\Notifications\NewAccountRequestNotification; 
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-  public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
 {
     $request->validate([
         'name' => ['required', 'string', 'max:255'],
@@ -40,13 +34,24 @@ class RegisteredUserController extends Controller
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-        'role' => 'User', 
-        'is_active' => true, // Indispensable pour éviter la déconnexion immédiate
+        'role' => 'guest', 
+        'is_active' => false, 
     ]);
 
     event(new Registered($user));
-    Auth::login($user);
 
-    return redirect(RouteServiceProvider::HOME)->with('success', 'Votre compte a été créé avec succès.');
+    // --- ALERTER LES ADMINISTRATEURS ---
+    try {
+        $admins = User::where('role', 'admin')->get();
+        if ($admins->count() > 0) {
+            // On tente l'envoi
+            \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\NewAccountRequestNotification($user));
+        }
+    } catch (\Exception $e) {
+        // En cas d'erreur SMTP (535), on ignore l'erreur pour ne pas bloquer l'utilisateur
+        // L'admin verra quand même la demande dans son tableau de bord car elle est en base de données
+    }
+    
+    return redirect()->route('login')->with('success', 'Votre demande d\'ouverture de compte a été envoyée.');
 }
 }

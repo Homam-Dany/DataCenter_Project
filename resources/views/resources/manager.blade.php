@@ -43,12 +43,29 @@
                     <form action="{{ route('resources.toggleMaintenance', $resource->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('PATCH')
-                        <button type="submit" class="btn {{ $resource->status === 'maintenance' ? 'btn-success' : 'btn-warning' }}" style="font-size: 0.8rem;">
+                        <button type="submit" class="btn {{ $resource->status === 'maintenance' ? 'btn-success' : 'btn-warning' }}" style="font-size: 0.8rem; padding: 8px 12px;">
                             {{ $resource->status === 'maintenance' ? 'Remettre en service' : 'Mettre en maintenance' }}
                         </button>
                     </form>
 
-                    <a href="{{ route('resources.edit', $resource->id) }}" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">
+                    {{-- BOUTON MODIFIER STYLISÉ --}}
+                    <a href="{{ route('resources.edit', $resource->id) }}" 
+                       style="
+                        display: inline-block;
+                        padding: 8px 16px;
+                        background: rgba(99, 102, 241, 0.1);
+                        border: 1px solid #6366f1;
+                        border-radius: 6px;
+                        color: #6366f1;
+                        font-size: 0.85rem;
+                        font-weight: 600;
+                        text-decoration: none;
+                        text-transform: uppercase;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);"
+                       onmouseover="this.style.background='#6366f1'; this.style.color='white'; this.style.boxShadow='0 0 15px rgba(99, 102, 241, 0.5)';"
+                       onmouseout="this.style.background='rgba(99, 102, 241, 0.1)'; this.style.color='#6366f1'; this.style.boxShadow='0 0 10px rgba(99, 102, 241, 0.2)';"
+                    >
                         Modifier
                     </a>
                 </div>

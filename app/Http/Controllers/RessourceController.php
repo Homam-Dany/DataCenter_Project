@@ -4,146 +4,117 @@ namespace App\Http\Controllers;
 
 use App\Models\Resource;
 use App\Models\Log;
-use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ResourceController extends Controller
 {
-    /**
-     * Vue publique : Catalogue des ressources (Invité / Utilisateur)
-     */
-    public function index(Request $request)
-    {
-        $query = Resource::query();
-
-        // Filtres
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $resources = $query->with('manager')->get();
-
-        // Calcul du taux d'occupation pour la vue catalogue
-        $totalResources = Resource::count();
-        $occupiedResources = Reservation::where('status', 'Approuvée')
-            ->where('start_date', '<=', now())
-            ->where('end_date', '>=', now())
-            ->distinct('resource_id')
-            ->count('resource_id');
-
-        $occupancyRate = $totalResources > 0 ? round(($occupiedResources / $totalResources) * 100, 2) : 0;
-
-        // On passe bien occupancyRate à la vue pour éviter l'erreur "Undefined variable"
-        return view('resources.index', compact('resources', 'occupancyRate'));
+   public function index(Request $request)
+{
+    $query = Resource::query();
+    
+    if ($request->filled('type')) {
+        $query->where('type', $request->type);
+    }
+    
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
     }
 
-    /**
-     * Vue Responsable : Gestion des ressources supervisées
-     */
-    public function managerIndex()
+    $resources = $query->get(); // On récupère TOUTES les ressources pour la boucle
+    return view('resources.index', compact('resources'));
+}
+
+    public function rules()
     {
+        return view('resources.rules');
+    }
+
+   public function managerIndex()
+{
+    if (Auth::user()->role === 'admin') {
+        // L'admin voit tout le catalogue (Point 4.2)
+        $resources = Resource::with('manager')->get();
+    } else {
+        // Le responsable ne voit que ses ressources (Point 3.1)
         $resources = Resource::where('manager_id', Auth::id())->get();
-        return view('resources.manager', compact('resources'));
     }
 
-    /**
-     * Formulaire de création (Méthode manquante qui causait l'erreur)
-     */
+    return view('resources.manager', compact('resources'));
+}
+
     public function create()
     {
-        return view('resources.create');
+        $managers = User::where('role', 'responsable')->get();
+        return view('resources.create', compact('managers'));
     }
 
-    /**
-     * Enregistrement d'une ressource
-     */
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'type' => 'required|string',
-            'category' => 'required|string',
-            'cpu' => 'nullable|integer',
-            'ram' => 'nullable|integer',
-            'storage_capacity' => 'nullable|integer',
-            'storage_type' => 'nullable|string',
-            'bandwidth' => 'nullable|string',
-            'os' => 'nullable|string',
-            'location' => 'nullable|string',
-        ]);
+   public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'type' => 'required|string',
+        'cpu' => 'required|integer',
+        'ram' => 'required|integer',
+        'category' => 'required|string',
+    ]);
 
-        $validated['manager_id'] = Auth::id();
-        $validated['status'] = 'disponible';
+    Resource::create([
+        'name' => $request->name,
+        'type' => $request->type,
+        'cpu' => $request->cpu,
+        'ram' => $request->ram,
+        'category' => $request->category,
+        'status' => 'disponible',
+        'manager_id' => auth()->id(), // Le créateur devient le manager
+    ]);
 
-        $resource = Resource::create($validated);
+    return redirect()->route('resources.index')->with('success', 'Ressource ajoutée au parc.');
+}
 
-        Log::create([
-            'user_id' => Auth::id(),
-            'action' => 'Ajout Ressource',
-            'description' => "Nouvelle ressource ajoutée : {$resource->name}"
-        ]);
-
-        return redirect()->route('resources.manager')->with('success', 'La ressource a été ajoutée.');
-    }
-
-    /**
-     * Formulaire de modification (Méthode manquante qui causait l'erreur)
-     */
     public function edit(Resource $resource)
     {
-        // Vérification des droits
-        if ($resource->manager_id !== Auth::id() && !Auth::user()->isAdmin()) {
+        if ($resource->manager_id !== Auth::id() && Auth::user()->role !== 'admin') {
             abort(403);
         }
-
-        return view('resources.edit', compact('resource'));
+        $managers = User::where('role', 'responsable')->get();
+        return view('resources.edit', compact('resource', 'managers'));
     }
 
-    /**
-     * Mise à jour des caractéristiques
-     */
     public function update(Request $request, Resource $resource)
     {
-        if ($resource->manager_id !== Auth::id() && !Auth::user()->isAdmin()) {
+        if ($resource->manager_id !== Auth::id() && Auth::user()->role !== 'admin') {
             abort(403);
         }
+
+        // Ajout de la validation pour la maintenance planifiée (Point 4.4)
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'maintenance_start' => 'nullable|date',
+            'maintenance_end' => 'nullable|date|after:maintenance_start',
+        ]);
 
         $resource->update($request->all());
 
         Log::create([
             'user_id' => Auth::id(),
-            'action' => 'Modification Ressource',
-            'description' => "Caractéristiques mises à jour : {$resource->name}"
+            'action' => 'Admin: Mise à jour',
+            'description' => "Modifications globales sur {$resource->name}"
         ]);
 
-        return redirect()->route('resources.manager')->with('success', 'Caractéristiques mises à jour.');
+        return redirect()->route('admin.dashboard')->with('success', 'Catalogue mis à jour.');
     }
 
-    /**
-     * Maintenance
-     */
     public function toggleMaintenance(Resource $resource)
     {
-        if ($resource->manager_id !== Auth::id() && !Auth::user()->isAdmin()) {
+        if ($resource->manager_id !== Auth::id() && Auth::user()->role !== 'admin') {
             abort(403);
         }
 
         $newStatus = ($resource->status === 'maintenance') ? 'disponible' : 'maintenance';
         $resource->update(['status' => $newStatus]);
 
-        Log::create([
-            'user_id' => Auth::id(),
-            'action' => 'Changement Statut',
-            'description' => "La ressource {$resource->name} est en : {$newStatus}"
-        ]);
-
-        return redirect()->back()->with('success', "Statut changé en {$newStatus}.");
+        return redirect()->back()->with('success', "État de la ressource changé en {$newStatus}.");
     }
 }

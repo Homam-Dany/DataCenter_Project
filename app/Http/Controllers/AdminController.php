@@ -7,75 +7,95 @@ use App\Models\Log;
 use App\Models\User;
 use App\Models\Resource;
 use App\Models\Reservation;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
     /**
-     * Tableau de bord global de l'administrateur
+     * Dashboard Global avec Statistiques (Point 4.3 de l'énoncé)
      */
     public function dashboard()
     {
-        // Statistiques demandées par l'énoncé
+        $totalResources = Resource::count();
+        // On considère une ressource occupée si elle a une réservation "Approuvée" ou "Active"
+        $occupiedResources = Reservation::whereIn('status', ['Approuvée', 'Active'])
+            ->distinct('resource_id')
+            ->count('resource_id');
+
         $stats = [
             'total_users' => User::count(),
-            'total_resources' => Resource::count(),
-            'active_reservations' => Reservation::where('status', 'active')->count(),
-            'pending_accounts' => User::where('role', 'guest')->count(), // Demandes d'ouverture de compte
+            'total_resources' => $totalResources,
+            'active_reservations' => $occupiedResources,
+            'pending_accounts' => User::where('role', 'guest')->where('is_active', false)->count(),
+            'total_logs' => Log::count(),
         ];
 
-        // Taux d'occupation global
-        $stats['occupancy_rate'] = $stats['total_resources'] > 0 
-            ? round(($stats['active_reservations'] / $stats['total_resources']) * 100) 
+        // Calcul du taux d'occupation global (Point 4.3)
+        $stats['occupancy_rate'] = $totalResources > 0 
+            ? round(($occupiedResources / $totalResources) * 100) 
             : 0;
 
-        return view('admin.dashboard', compact('stats'));
+        $resourcesByType = Resource::select('type', DB::raw('count(*) as total'))->groupBy('type')->get();
+        $maintenanceCount = Resource::where('status', 'maintenance')->count();
+        $recentLogs = Log::with('user')->latest()->take(10)->get();
+
+        return view('admin.dashboard', compact('stats', 'resourcesByType', 'maintenanceCount', 'recentLogs'));
     }
 
     /**
-     * Gestion des utilisateurs (Liste et Rôles)
+     * Gestion des Utilisateurs (Point 4.1 et 4.5)
      */
-    public function users()
-    {
-        $users = User::all();
-        return view('admin.users', compact('users'));
+    public function users() 
+    { 
+        $users = User::orderBy('created_at', 'desc')->get(); 
+        return view('admin.users', compact('users')); 
     }
 
     /**
-     * Changer le rôle ou activer/désactiver un utilisateur
-     */
-   public function updateUser(Request $request, User $user)
-{
-    // Validation souple pour accepter soit le rôle, soit l'état actif
-    $validated = $request->validate([
-        'role' => 'nullable|in:guest,user,responsable,admin',
-        'is_active' => 'nullable|boolean',
-    ]);
-
-    if ($request->has('role')) {
-        $user->role = $request->role;
-    }
-
-    if ($request->has('is_active')) {
-        $user->is_active = $request->is_active;
-    }
-
-    $user->save();
-
-    Log::create([
-        'action' => 'Gestion Compte',
-        'description' => "Mise à jour de l'utilisateur {$user->name} (Rôle: {$user->role}, Actif: {$user->is_active})",
-        'user_id' => auth()->id(),
-    ]);
-
-    return redirect()->back()->with('success', 'Utilisateur mis à jour avec succès.');
-}
-
-    /**
-     * Consultation des journaux (Logs)
+     * Consultation des Logs globaux (Traçabilité demandée)
      */
     public function logs()
     {
-        $logs = Log::with('user')->latest()->paginate(20);
+        $logs = Log::with('user')->latest()->paginate(25);
         return view('admin.logs', compact('logs'));
+    }
+
+    /**
+     * Activation/Désactivation et Rôles (Point 4.5)
+     */
+    public function updateUser(Request $request, User $user)
+    {
+        $request->validate([
+            'role' => 'nullable|in:guest,user,responsable,admin',
+            'is_active' => 'nullable|boolean',
+        ]);
+
+        $oldStatus = $user->is_active;
+
+        if ($request->has('role')) $user->role = $request->role;
+        if ($request->has('is_active')) $user->is_active = $request->is_active;
+        
+        $user->save();
+
+        // Log de l'action admin
+        Log::create([
+            'user_id' => auth()->id(),
+            'action' => 'Gestion Admin',
+            'description' => "Profil mis à jour pour {$user->email} (Rôle: {$user->role}, Actif: {$user->is_active})"
+        ]);
+
+        // Envoi d'email en cas d'activation (si pas d'erreur SMTP)
+        if (!$oldStatus && $user->is_active) {
+            try {
+                Mail::html("<h1>Activation de compte</h1><p>Bonjour {$user->name}, votre accès au Data Center a été validé.</p>", function ($message) use ($user) {
+                    $message->to($user->email)->subject('Accès Data Center Activé');
+                });
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("SMTP Error: " . $e->getMessage());
+            }
+        }
+
+        return redirect()->back()->with('success', 'Modifications système enregistrées.');
     }
 }

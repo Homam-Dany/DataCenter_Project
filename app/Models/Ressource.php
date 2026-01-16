@@ -11,7 +11,7 @@ class Resource extends Model
 
     protected $fillable = [
         'name',
-        'type', // Serveur, VM, Stockage, Réseau
+        'type', 
         'category',
         'cpu',
         'ram',
@@ -21,20 +21,21 @@ class Resource extends Model
         'os',
         'location',
         'status', // disponible, maintenance, désactivée
-        'manager_id' // ID du Responsable Technique
+        'manager_id',
+        'maintenance_start', // NOUVEAU : Pour point 4.4
+        'maintenance_end'    // NOUVEAU : Pour point 4.4
     ];
 
-    /**
-     * Relation : Une ressource est gérée par un responsable (User)
-     */
+    protected $casts = [
+        'maintenance_start' => 'datetime',
+        'maintenance_end' => 'datetime',
+    ];
+
     public function manager()
     {
         return $this->belongsTo(User::class, 'manager_id');
     }
 
-    /**
-     * Relation : Une ressource peut avoir plusieurs réservations
-     */
     public function reservations()
     {
         return $this->hasMany(Reservation::class);
