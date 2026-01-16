@@ -125,7 +125,7 @@ Conçu pour démontrer la maîtrise du développement Web moderne, de la gestion
 
 ✍️ Auteurs
 
-- DANY HOMAM / EL Hajioui Houssam / El Bourmaki Salim / Farssi Fatima Zahra
+- Dany Homam / EL Hajioui Houssam / El Bourmaki Salim / Farssi Fatima Zahra
 - Étudiants en Ingenieurie De Developpement D'Applications Informatiques
 - Projet académique – Gestion des Ressources d’un Data Center
 
