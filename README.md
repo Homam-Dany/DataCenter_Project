@@ -32,29 +32,6 @@ Le projet est développé avec le **framework Laravel**, en respectant les **bon
 
 ---
 
-## 🧩 Architecture Générale (MVC)
-
-┌────────────────────────┐
-│ Interface Utilisateur │
-│ HTML / CSS / JS natif │
-└────────────▲───────────┘
-│
-┌────────────┴───────────┐
-│ Controllers │
-│ Logique applicative │
-└────────────▲───────────┘
-│
-┌────────────┴───────────┐
-│ Models │
-│ Eloquent ORM │
-└────────────▲───────────┘
-│
-┌────────────┴───────────┐
-│ Base de données │
-│ MySQL │
-└────────────────────────┘
-
----
 
 ## 👥 Profils Utilisateurs
 
@@ -140,18 +117,8 @@ Le projet est développé avec le **framework Laravel**, en respectant les **bon
 
 ---
 
-## 🚀 Installation
 
-```bash
-git clone https://github.com/votre-utilisateur/nom-du-projet.git
-cd nom-du-projet
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate
-php artisan serve
-
-📌 Statut du Projet
+## 📌 Statut du Projet
 
 📘 Projet académique universitaire
 Conçu pour démontrer la maîtrise du développement Web moderne, de la gestion des ressources et des architectures applicatives.
