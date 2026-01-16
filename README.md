@@ -1,64 +1,167 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+<div align="center">
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 🏢 Data Center Resource Management System
+### Application Web de Réservation et de Gestion des Ressources Informatiques
 
-## About Laravel
+![Laravel](https://img.shields.io/badge/Laravel-Framework-red)
+![PHP](https://img.shields.io/badge/PHP-8.x-blue)
+![MySQL](https://img.shields.io/badge/MySQL-Database-orange)
+![Status](https://img.shields.io/badge/Project-Academic-success)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+</div>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📖 Présentation Générale
 
-## Learning Laravel
+Cette application Web a pour objectif la **gestion centralisée, la réservation et le suivi des ressources informatiques d’un Data Center**.  
+Elle permet une exploitation **efficace, sécurisée et transparente** des ressources à travers une plateforme multi-utilisateurs avec **rôles et permissions différenciés**.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Le projet est développé avec le **framework Laravel**, en respectant les **bonnes pratiques du génie logiciel**, notamment l’architecture **MVC**, la sécurité applicative et la traçabilité des actions.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🎯 Objectifs du Projet
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+- Concevoir une **base de données relationnelle normalisée**
+- Implémenter un **système de réservation intelligent**
+- Gérer les **rôles et permissions utilisateurs**
+- Développer une interface **ergonomique et responsive**
+- Mettre en place un **système de notifications et de statistiques**
+- Assurer la **sécurité et la journalisation** des actions critiques
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## 🧩 Architecture Générale (MVC)
 
-## Contributing
+┌────────────────────────┐
+│ Interface Utilisateur │
+│ HTML / CSS / JS natif │
+└────────────▲───────────┘
+│
+┌────────────┴───────────┐
+│ Controllers │
+│ Logique applicative │
+└────────────▲───────────┘
+│
+┌────────────┴───────────┐
+│ Models │
+│ Eloquent ORM │
+└────────────▲───────────┘
+│
+┌────────────┴───────────┐
+│ Base de données │
+│ MySQL │
+└────────────────────────┘
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 👥 Profils Utilisateurs
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 👤 Invité
+- Consultation des ressources disponibles
+- Accès aux règles d’utilisation
+- Demande d’ouverture de compte
 
-## Security Vulnerabilities
+### 👨‍💻 Utilisateur interne (Ingénieur / Enseignant / Doctorant)
+- Espace personnel sécurisé
+- Recherche et filtrage des ressources
+- Demande de réservation avec justification
+- Suivi des statuts :
+  - ⏳ En attente
+  - ✅ Approuvée
+  - ❌ Refusée
+  - 🔄 Active
+  - ✔ Terminée
+- Historique des réservations
+- Réception de notifications
+- Signalement d’incidents techniques
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 🛠 Responsable Technique
+- Gestion des ressources supervisées
+- Validation ou refus des demandes
+- Planification des maintenances
+- Modération des échanges liés aux ressources
 
-## License
+### 👑 Administrateur du Data Center
+- Gestion des utilisateurs, rôles et permissions
+- Gestion du catalogue des ressources
+- Supervision globale du Data Center
+- Activation / désactivation des ressources
+- Consultation des statistiques globales
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## ⚙️ Fonctionnalités Principales
+
+### 🔧 Gestion des Ressources
+- Catégories :
+  - Serveurs physiques
+  - Machines virtuelles
+  - Stockage
+  - Équipements réseau
+- Fiches techniques détaillées :
+  - CPU, RAM
+  - Capacité et type de stockage
+  - Bande passante
+  - Système d’exploitation
+  - État et disponibilité
+  - Historique d’utilisation
+
+### 📅 Système de Réservation
+- Vérification automatique des disponibilités
+- Détection des conflits de réservation
+- Gestion complète du cycle de vie des demandes
+- Notifications internes automatiques
+
+### 📊 Statistiques et Tableaux de Bord
+- Taux d’occupation des ressources
+- Analyse d’utilisation
+- Traçabilité des actions
+
+### 🔐 Sécurité
+- Authentification Laravel
+- Middleware de protection
+- Gestion fine des rôles et permissions
+- Journalisation des actions sensibles
+
+---
+
+## 🛠️ Technologies Utilisées
+
+| Domaine | Technologies |
+|-------|-------------|
+| Back-end | Laravel / PHP |
+| Base de données | MySQL |
+| Front-end | HTML, CSS personnalisé, JavaScript natif |
+| Sécurité | Auth Laravel, Middleware |
+
+> ⚠️ Sans jQuery, Bootstrap, Tailwind ou frameworks CSS externes.
+
+---
+
+## 🚀 Installation
+
+```bash
+git clone https://github.com/votre-utilisateur/nom-du-projet.git
+cd nom-du-projet
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+
+📌 Statut du Projet
+
+📘 Projet académique universitaire
+Conçu pour démontrer la maîtrise du développement Web moderne, de la gestion des ressources et des architectures applicatives.
+
+✍️ Auteurs
+
+DANY HOMAM / EL Hajioui Houssam / El Bourmaki Salim / Farssi Fatima Zahra
+Étudiants en Ingenieurie De Developpement D'Applications Informatiques
+Projet académique – Gestion des Ressources d’un Data Center
+
+🏁 Conclusion
+
+Cette application constitue une solution complète et évolutive pour la gestion des ressources d’un Data Center, intégrant les principes fondamentaux du génie logiciel, de la sécurité et de la conception orientée objet.
