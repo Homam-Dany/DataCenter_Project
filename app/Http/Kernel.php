@@ -39,6 +39,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             // AJOUT ICI : Vérifie l'état du compte à chaque requête web
             \App\Http\Middleware\CheckAccountStatus::class,
+            \Illuminate\Http\Middleware\HandleCors::class,
         ],
 
         'api' => [
