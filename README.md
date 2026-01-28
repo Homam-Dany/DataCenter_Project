@@ -95,7 +95,7 @@ Cette application respecte des contraintes strictes pour démontrer une expertis
 - **Salim El Bourmaki**
 ---
 
-div align="center">
+<div align="center">
 
 **Projet Académique d'Excellence — Université Abdelmalek Essaâdi**  
 *Département d'Informatique*
