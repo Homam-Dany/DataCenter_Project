@@ -1,39 +1,46 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
-        @csrf
+<!DOCTYPE html>
+<html lang="fr">
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réinitialisation Mot de passe | DC-Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    @vite(['resources/css/auth/reset-password.css'])
+</head>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+<body>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+    <div class="container">
+        <h1>Réinitialiser le mot de passe</h1>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+        <form method="POST" action="{{ route('password.store') }}">
+            @csrf
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
+            <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+            <div class="input-group">
+                <input type="email" name="email" placeholder="Email" value="{{ old('email', $request->email) }}"
+                    required autofocus>
+                @error('email') <span class="error-msg">{{ $message }}</span> @enderror
+            </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+            <div class="input-group">
+                <input type="password" name="password" placeholder="Nouveau mot de passe" required
+                    autocomplete="new-password">
+                @error('password') <span class="error-msg">{{ $message }}</span> @enderror
+            </div>
+
+            <div style="text-align: left;">
+                <input type="password" name="password_confirmation" placeholder="Confirmer le mot de passe" required
+                    autocomplete="new-password">
+                @error('password_confirmation') <span class="error-msg">{{ $message }}</span> @enderror
+            </div>
+
+            <button type="submit">Valider le nouveau mot de passe</button>
+        </form>
+    </div>
+
+</body>
+
+</html>

@@ -9,13 +9,16 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Auth::user()->notifications; // Récupère toutes les notifications
+        // On récupère tous les notifications (lues et non lues)
+        $notifications = Auth::user()->notifications()->latest()->get();
+
         return view('notifications.index', compact('notifications'));
     }
 
     public function markAsRead()
     {
         Auth::user()->unreadNotifications->markAsRead();
+
         return back()->with('success', 'Toutes les notifications ont été marquées comme lues.');
     }
 }

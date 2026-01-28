@@ -1,47 +1,75 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!DOCTYPE html>
+<html lang="fr">
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion | DC-Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    @vite(['resources/css/auth/login.css'])
+</head>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+<body
+    style="background: url('{{ url('images/bgdc.png') }}?v={{ time() }}') no-repeat center center fixed !important; background-size: cover !important; background-color: #1a1a1a;">
+    <div class="container {{ (isset($panel) && $panel === 'register') || request('panel') === 'register' || session('panel') === 'register' ? 'active' : '' }}"
+        id="container">
+        <div class="form-container sign-up">
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+                <h1>Créer un compte</h1>
+                <span>Utilisez votre email pour vous inscrire</span>
+                <input type="text" name="name" placeholder="Nom" required value="{{ old('name') }}">
+                @error('name') <span class="error-msg">{{ $message }}</span> @enderror
+
+                <input type="email" name="email" placeholder="Email" required value="{{ old('email') }}">
+                @error('email') <span class="error-msg">{{ $message }}</span> @enderror
+
+                <input type="password" name="password" placeholder="Mot de passe" required>
+                @error('password') <span class="error-msg">{{ $message }}</span> @enderror
+
+                <input type="password" name="password_confirmation" placeholder="Confirmer le mot de passe" required>
+                <button type="submit">S'INSCRIRE</button>
+                <a href="{{ route('resources.index') }}" class="guest-link-auth">Continuer comme invité</a>
+            </form>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <div class="form-container sign-in">
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+                <h1>Se Connecter</h1>
+                <div class="social-icons">
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+                </div>
+                <span>Utilisez votre email et mot de passe</span>
+                <input type="email" name="email" placeholder="Email" required value="{{ old('email') }}">
+                @error('email') <span class="error-msg">{{ $message }}</span> @enderror
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                <input type="password" name="password" placeholder="Mot de passe" required>
+                @error('password') <span class="error-msg">{{ $message }}</span> @enderror
+
+                <a href="{{ route('password.request') }}">Mot de passe oublié ?</a>
+                <button type="submit">SE CONNECTER</button>
+                <a href="{{ route('resources.index') }}" class="guest-link-auth">Continuer comme invité</a>
+            </form>
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>De retour ?</h1>
+                    <p>Connectez-vous avec vos informations personnelles pour accéder au parc informatique.</p>
+                    <button class="hidden" id="login">SE CONNECTER</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Bonjour !</h1>
+                    <p>Inscrivez-vous pour commencer à gérer vos ressources dès maintenant.</p>
+                    <button class="hidden" id="register">S'INSCRIRE</button>
+                </div>
+            </div>
         </div>
+    </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+    @vite(['resources/js/auth/login.js'])
+</body>
 
-            <x-primary-button class="ml-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</html>

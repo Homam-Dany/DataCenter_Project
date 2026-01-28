@@ -27,7 +27,8 @@ class ReservationStatusNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        // En local (et pour éviter les erreurs SMTP), on utilise uniquement la base de données
+        return ['database'];
     }
 
     /**
@@ -46,16 +47,16 @@ class ReservationStatusNotification extends Notification
         // Si la demande est refusée, on affiche le motif en rouge (error) dans le mail
         if ($status === 'Refusée') {
             $mail->error()
-                 ->line("Votre demande a été refusée pour le motif suivant :")
-                 ->line("**{$this->reservation->rejection_reason}**");
+                ->line("Votre demande a été refusée pour le motif suivant :")
+                ->line("**{$this->reservation->rejection_reason}**");
         } else {
             $mail->success()
-                 ->line("Votre demande a été approuvée avec succès.")
-                 ->line("Période : Du {$this->reservation->start_date->format('d/m/Y')} au {$this->reservation->end_date->format('d/m/Y')}");
+                ->line("Votre demande a été approuvée avec succès.")
+                ->line("Période : Du {$this->reservation->start_date->format('d/m/Y')} au {$this->reservation->end_date->format('d/m/Y')}");
         }
 
         return $mail->action('Consulter mes réservations', $url)
-                    ->line('Merci d’utiliser la plateforme IDAI Data Center.');
+            ->line('Merci d’utiliser la plateforme IDAI Data Center.');
     }
 
     /**
