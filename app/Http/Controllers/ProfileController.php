@@ -16,7 +16,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        return view('profile', [
             'user' => $request->user(),
         ]);
     }
@@ -44,6 +44,9 @@ class ProfileController extends Controller
     {
         $request->validateWithBag('userDeletion', [
             'password' => ['required', 'current-password'],
+        ], [
+            'password.required' => 'Le mot de passe est requis pour confirmer la suppression.',
+            'password.current_password' => 'Le mot de passe est incorrect.',
         ]);
 
         $user = $request->user();
@@ -55,6 +58,6 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return Redirect::route('resources.index')->with('success', 'Votre compte a été supprimé avec succès.');
     }
 }

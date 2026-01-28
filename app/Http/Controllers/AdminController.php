@@ -32,8 +32,8 @@ class AdminController extends Controller
         ];
 
         // Calcul du taux d'occupation global (Point 4.3)
-        $stats['occupancy_rate'] = $totalResources > 0 
-            ? round(($occupiedResources / $totalResources) * 100) 
+        $stats['occupancy_rate'] = $totalResources > 0
+            ? round(($occupiedResources / $totalResources) * 100)
             : 0;
 
         $resourcesByType = Resource::select('type', DB::raw('count(*) as total'))->groupBy('type')->get();
@@ -46,18 +46,24 @@ class AdminController extends Controller
     /**
      * Gestion des Utilisateurs (Point 4.1 et 4.5)
      */
-    public function users() 
-    { 
-        $users = User::orderBy('created_at', 'desc')->get(); 
-        return view('admin.users', compact('users')); 
+    public function users()
+    {
+        $users = User::orderBy('created_at', 'desc')->get();
+        return view('admin.users', compact('users'));
     }
 
     /**
      * Consultation des Logs globaux (Traçabilité demandée)
      */
-    public function logs()
+    public function logs(Request $request)
     {
-        $logs = Log::with('user')->latest()->paginate(25);
+        $query = Log::with('user');
+
+        if ($request->has('action') && $request->action != '') {
+            $query->where('action', $request->action);
+        }
+
+        $logs = $query->latest()->paginate(25)->withQueryString();
         return view('admin.logs', compact('logs'));
     }
 
@@ -73,28 +79,36 @@ class AdminController extends Controller
 
         $oldStatus = $user->is_active;
 
-        if ($request->has('role')) $user->role = $request->role;
-        if ($request->has('is_active')) $user->is_active = $request->is_active;
-        
+        if ($request->has('role'))
+            $user->role = $request->role;
+        if ($request->has('is_active'))
+            $user->is_active = $request->is_active;
+        if ($request->has('rejection_reason'))
+            $user->rejection_reason = $request->rejection_reason;
+
         $user->save();
 
         // Log de l'action admin
+        $actionDescription = "Profil mis à jour pour {$user->email} (Rôle: {$user->role}, Actif: {$user->is_active})";
+        if ($request->has('rejection_reason') && $request->rejection_reason) {
+            $actionDescription .= " - Refusé pour : " . $request->rejection_reason;
+        }
+
         Log::create([
             'user_id' => auth()->id(),
             'action' => 'Gestion Admin',
-            'description' => "Profil mis à jour pour {$user->email} (Rôle: {$user->role}, Actif: {$user->is_active})"
+            'description' => $actionDescription
         ]);
 
-        // Envoi d'email en cas d'activation (si pas d'erreur SMTP)
+        // Envoi d'email en cas d'activation
         if (!$oldStatus && $user->is_active) {
             try {
-                Mail::html("<h1>Activation de compte</h1><p>Bonjour {$user->name}, votre accès au Data Center a été validé.</p>", function ($message) use ($user) {
-                    $message->to($user->email)->subject('Accès Data Center Activé');
-                });
+                $user->notify(new \App\Notifications\AccountActivatedNotification($user));
             } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error("SMTP Error: " . $e->getMessage());
+                \Illuminate\Support\Facades\Log::error("SMTP Notification Error: " . $e->getMessage());
             }
         }
+
 
         return redirect()->back()->with('success', 'Modifications système enregistrées.');
     }
