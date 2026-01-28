@@ -1,108 +1,107 @@
-# <img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/server.svg" width="30" height="30" /> DC-Manager : Infrastructure & Resource Orchestrator
-
-<div align="center">
+# 🌐 DataCenter Management System
 
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
-![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 
-**La solution de référence pour la gestion, la réservation et le monitoring des ressources de Data Center.**
-*Développée avec rigueur, sans frameworks CSS/JS, pour une performance pure.*
-
-[Concept](#-vision--concept) • [Spécifications](#-spécifications-techniques) • [Installation](#-guide-dinstallation) • [Équipe](#-équipe)
+A comprehensive web application designed for managing resource reservations, tracking incidents, and monitoring logs within a Data Center environment. Built with **Laravel 9** and modernized with **Vite**.
 
 ---
-</div>
 
-## 🎯 Vision & Concept
+## ✨ Key Features
 
-**DC-Manager** répond au défi critique de l'allocation des ressources IT (Serveurs, Baies, VMs) en environnement partagé. 
-Notre approche "Zero-Dependency" sur le frontend garantit une maîtrise totale du code, une légèreté inégalée et une interface sur-mesure (Dark Mode natif) pensée pour les ingénieurs.
+### � Infrastructure Management
+- **Resource Catalogue**: Browse and manage available server racks and data center resources.
+- **Maintenance Mode**: Toggle resources in and out of maintenance to prevent unauthorized bookings.
 
-## 🚀 Fonctionnalités Clés
+### � Reservation System
+- **Booking Flow**: Streamlined reservation process for users.
+- **Approval Workflow**: Admin/Responsable dashboard to approve, reject, or manage reservation requests with reason tracking.
+- **History Tracking**: Complete logs of past and current reservations.
 
-### 💎 Expérience Utilisateur (UI/UX)
-- **Interface Premium** : Design moderne, "Card-based", avec un mode sombre profond (Midnight Blue).
-- **Responsive** : Adaptation fluide sur tous les écrans grâce à CSS Grid & Flexbox.
-- **Tableaux de Bord Personnalisés** : Vues adaptées par rôle (Utilisateur, Responsable, Admin).
+### ⚠️ Incident Reporting
+- **User Alerts**: Facility for users to report technical issues immediately.
+- **Resolution Management**: Management interface to track and mark incidents as resolved.
 
-### 🛡️ Cœur Fonctionnel
-- **Système de Réservation Intelligent** :
-    - Algorithme anti-collision (interdiction des chevauchements).
-    - Vérification de disponibilité en temps réel.
-- **Gestion d'Incidents** : Workflow de signalement et de résolution intégré.
-- **Mon Profil** : Espace personnel complet (Sécurité, RGPD, Historique).
-- **Administration** : Audit logs, graphiques statistiques (Chart.js), gestion des utilisateurs.
+### 🔔 Smart Notifications
+- **Automated Alerts**: Real-time notifications for account activation, reservation updates, and incident status.
+- **Expiry Warnings**: Automated system to warn users before their reservations expire.
 
-## 🛠 Spécifications Techniques
+---
 
-Cette application respecte des contraintes strictes pour démontrer une expertise technique :
+## 👥 Core Roles
 
-- **Backend** : Laravel 9/10 (Architecture MVC, Eloquent ORM, Policies, Middlewares).
-- **Frontend** :
-    - **CSS** : 100% Custom (Pas de Bootstrap ni Tailwind). Architecture modulaire.
-    - **JS** : Vanilla ES6+ (Pas de jQuery). Modules séparés par fonctionnalité.
-    - **Build** : Vite.js pour la compilation des assets.
-- **Base de Données** : MySQL relationnelle.
+- **Admin**: Full system control (User management, system logs, full dashboard).
+- **Responsable**: Resource management and reservation validation.
+- **User**: Catalogue browsing and resource booking.
 
-## 📦 Guide d'Installation
+---
 
-### Prérequis
-- PHP 8.1+
+## � Getting Started
+
+### Prerequisites
+- PHP >= 8.0
 - Composer
 - Node.js & NPM
-- Serveur MySQL
+- MySQL
 
-### Démarrage Rapide
+### Installation
 
-1. **Cloner et Installer les dépendances**
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/Homam-Dany/Application_Web_DataCenter.git
-   cd Application_Web_DataCenter
+   git clone https://github.com/Homam-Dany/DataCenter_Project.git
+   cd DataCenter_Project
+   ```
+
+2. **Install Dependencies**
+   ```bash
    composer install
    npm install
    ```
 
-2. **Configuration**
+3. **Environment Setup**
    ```bash
    cp .env.example .env
    php artisan key:generate
-   # Configurez votre base de données dans le fichier .env
    ```
 
-3. **Base de Données**
+4. **Database Migration**
    ```bash
-   php artisan migrate --seed
+   php artisan migrate
    ```
 
-4. **Lancement**
+5. **Run the Application**
    ```bash
-   npm run build
+   # Terminal 1
    php artisan serve
+   
+   # Terminal 2
+   npm run dev
    ```
 
 ---
 
-## 👥 Équipe
+## � Tech Stack
 
-## 👥 Équipe
-
-- **Homam Dany**
-- **Houssam ElHAJIOUI**
-- **Fatima Zahra Farssi**
-- **Salim El Bourmaki**
----
-
-<div align="center">
-
-**Projet Académique d'Excellence — Université Abdelmalek Essaâdi**  
-*Département d'Informatique*
-
----
-**Filiere : Ingenieurie de Developpement d'Applications Informatiques (IDAI)**
+- **Backend**: Laravel 9
+- **Frontend**: Blade, CSS3, JavaScript (ES6+)
+- **Build Tool**: Vite
+- **Database**: MySQL
+- **Real-time**: Laravel Notifications
 
 ---
 
-</div>
+## 📄 Documentation
+For detailed technical info, refer to the [RAPPORT_TECHNIQUE.md](file:///c:/xampp/htdocs/DataCenter_Project/RAPPORT_TECHNIQUE.md) file in the root directory.
+
+---
+
+## 🤝 The Team
+Developed by a team of dedicated developers focused on creating efficient infrastructure management solutions.
+- **Member 1**: Layouts & Reservation Core
+- **Member 2**: Admin System & Identity
+- **Member 3**: Security & Notifications
+- **Member 4**: Resources & Content
+
+---
+*Created for the DataCenter Management Project - 2026*
