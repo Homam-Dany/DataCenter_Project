@@ -1,134 +1,99 @@
+# <img src="https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/svgs/solid/server.svg" width="30" height="30" /> DC-Manager : Infrastructure & Resource Orchestrator
+
 <div align="center">
 
-# 🏢 Data Center Resource Management System
-### Application Web de Réservation et de Gestion des Ressources Informatiques
+![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
-![Laravel](https://img.shields.io/badge/Laravel-Framework-red)
-![PHP](https://img.shields.io/badge/PHP-8.x-blue)
-![MySQL](https://img.shields.io/badge/MySQL-Database-orange)
-![Status](https://img.shields.io/badge/Project-Academic-success)
+**La solution de référence pour la gestion, la réservation et le monitoring des ressources de Data Center.**
+*Développée avec rigueur, sans frameworks CSS/JS, pour une performance pure.*
 
+[Concept](#-vision--concept) • [Spécifications](#-spécifications-techniques) • [Installation](#-guide-dinstallation) • [Équipe](#-équipe)
+
+---
 </div>
 
----
+## 🎯 Vision & Concept
 
-## 📖 Présentation Générale
+**DC-Manager** répond au défi critique de l'allocation des ressources IT (Serveurs, Baies, VMs) en environnement partagé. 
+Notre approche "Zero-Dependency" sur le frontend garantit une maîtrise totale du code, une légèreté inégalée et une interface sur-mesure (Dark Mode natif) pensée pour les ingénieurs.
 
-Cette application Web a pour objectif la **gestion centralisée, la réservation et le suivi des ressources informatiques d’un Data Center**.  
-Elle permet une exploitation **efficace, sécurisée et transparente** des ressources à travers une plateforme multi-utilisateurs avec **rôles et permissions différenciés**.
+## 🚀 Fonctionnalités Clés
 
-Le projet est développé avec le **framework Laravel**, en respectant les **bonnes pratiques du génie logiciel**, notamment l’architecture **MVC**, la sécurité applicative et la traçabilité des actions.
+### 💎 Expérience Utilisateur (UI/UX)
+- **Interface Premium** : Design moderne, "Card-based", avec un mode sombre profond (Midnight Blue).
+- **Responsive** : Adaptation fluide sur tous les écrans grâce à CSS Grid & Flexbox.
+- **Tableaux de Bord Personnalisés** : Vues adaptées par rôle (Utilisateur, Responsable, Admin).
 
----
+### 🛡️ Cœur Fonctionnel
+- **Système de Réservation Intelligent** :
+    - Algorithme anti-collision (interdiction des chevauchements).
+    - Vérification de disponibilité en temps réel.
+- **Gestion d'Incidents** : Workflow de signalement et de résolution intégré.
+- **Mon Profil** : Espace personnel complet (Sécurité, RGPD, Historique).
+- **Administration** : Audit logs, graphiques statistiques (Chart.js), gestion des utilisateurs.
 
-## 🎯 Objectifs du Projet
+## 🛠 Spécifications Techniques
 
-- Concevoir une **base de données relationnelle normalisée**
-- Implémenter un **système de réservation intelligent**
-- Gérer les **rôles et permissions utilisateurs**
-- Développer une interface **ergonomique et responsive**
-- Mettre en place un **système de notifications et de statistiques**
-- Assurer la **sécurité et la journalisation** des actions critiques
+Cette application respecte des contraintes strictes pour démontrer une expertise technique :
 
----
+- **Backend** : Laravel 9/10 (Architecture MVC, Eloquent ORM, Policies, Middlewares).
+- **Frontend** :
+    - **CSS** : 100% Custom (Pas de Bootstrap ni Tailwind). Architecture modulaire.
+    - **JS** : Vanilla ES6+ (Pas de jQuery). Modules séparés par fonctionnalité.
+    - **Build** : Vite.js pour la compilation des assets.
+- **Base de Données** : MySQL relationnelle.
 
+## 📦 Guide d'Installation
 
-## 👥 Profils Utilisateurs
+### Prérequis
+- PHP 8.1+
+- Composer
+- Node.js & NPM
+- Serveur MySQL
 
-### 👤 Invité
-- Consultation des ressources disponibles
-- Accès aux règles d’utilisation
-- Demande d’ouverture de compte
+### Démarrage Rapide
 
-### 👨‍💻 Utilisateur interne (Ingénieur / Enseignant / Doctorant)
-- Espace personnel sécurisé
-- Recherche et filtrage des ressources
-- Demande de réservation avec justification
-- Suivi des statuts :
-  - ⏳ En attente
-  - ✅ Approuvée
-  - ❌ Refusée
-  - 🔄 Active
-  - ✔ Terminée
-- Historique des réservations
-- Réception de notifications
-- Signalement d’incidents techniques
+1. **Cloner et Installer les dépendances**
+   ```bash
+   git clone https://github.com/Homam-Dany/Application_Web_DataCenter.git
+   cd Application_Web_DataCenter
+   composer install
+   npm install
+   ```
 
-### 🛠 Responsable Technique
-- Gestion des ressources supervisées
-- Validation ou refus des demandes
-- Planification des maintenances
-- Modération des échanges liés aux ressources
+2. **Configuration**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   # Configurez votre base de données dans le fichier .env
+   ```
 
-### 👑 Administrateur du Data Center
-- Gestion des utilisateurs, rôles et permissions
-- Gestion du catalogue des ressources
-- Supervision globale du Data Center
-- Activation / désactivation des ressources
-- Consultation des statistiques globales
+3. **Base de Données**
+   ```bash
+   php artisan migrate --seed
+   ```
 
----
-
-## ⚙️ Fonctionnalités Principales
-
-### 🔧 Gestion des Ressources
-- Catégories :
-  - Serveurs physiques
-  - Machines virtuelles
-  - Stockage
-  - Équipements réseau
-- Fiches techniques détaillées :
-  - CPU, RAM
-  - Capacité et type de stockage
-  - Bande passante
-  - Système d’exploitation
-  - État et disponibilité
-  - Historique d’utilisation
-
-### 📅 Système de Réservation
-- Vérification automatique des disponibilités
-- Détection des conflits de réservation
-- Gestion complète du cycle de vie des demandes
-- Notifications internes automatiques
-
-### 📊 Statistiques et Tableaux de Bord
-- Taux d’occupation des ressources
-- Analyse d’utilisation
-- Traçabilité des actions
-
-### 🔐 Sécurité
-- Authentification Laravel
-- Middleware de protection
-- Gestion fine des rôles et permissions
-- Journalisation des actions sensibles
+4. **Lancement**
+   ```bash
+   npm run build
+   php artisan serve
+   ```
 
 ---
 
-## 🛠️ Technologies Utilisées
+## 👥 Équipe
 
-| Domaine | Technologies |
-|-------|-------------|
-| Back-end | Laravel / PHP |
-| Base de données | MySQL |
-| Front-end | HTML, CSS personnalisé, JavaScript natif |
-| Sécurité | Auth Laravel, Middleware |
-
-> ⚠️ Sans jQuery, Bootstrap, Tailwind ou frameworks CSS externes.
+- **Dany Homam** — *Lead Fullstack Developer & Architecte*
 
 ---
 
+<div align="center">
 
-## 📌 Statut du Projet
+**Projet Académique d'Excellence — Université Abdelmalek Essaâdi**  
+*Département Ingénierie De Développement D'Applications Informatiques*
 
-📘 Projet académique universitaire
-Conçu pour démontrer la maîtrise du développement Web moderne, de la gestion des ressources et des architectures applicatives.
-
-✍️ Auteurs
-
-- Dany Homam / EL Hajioui Houssam / El Bourmaki Salim / Farssi Fatima Zahra
-- Étudiants en Ingenieurie De Developpement D'Applications Informatiques
-- Projet académique – Gestion des Ressources d’un Data Center
-
-🏁 Conclusion
-
-Cette application constitue une solution complète et évolutive pour la gestion des ressources d’un Data Center, intégrant les principes fondamentaux du génie logiciel, de la sécurité et de la conception orientée objet.
+</div>

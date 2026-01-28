@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'rejection_reason',
     ];
 
     protected $hidden = [
@@ -36,8 +37,28 @@ class User extends Authenticatable
     ];
 
     // Méthodes d'aide pour vérifier les rôles dans les contrôleurs et vues
-    public function isAdmin() { return $this->role === self::ROLE_ADMIN; }
-    public function isResponsable() { return $this->role === self::ROLE_RESPONSABLE; }
-    public function isUser() { return $this->role === self::ROLE_USER; }
-    public function isGuest() { return $this->role === self::ROLE_GUEST; }
+    public function isAdmin()
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+    public function isResponsable()
+    {
+        return $this->role === self::ROLE_RESPONSABLE;
+    }
+    public function isUser()
+    {
+        return $this->role === self::ROLE_USER;
+    }
+    public function isGuest()
+    {
+        return $this->role === self::ROLE_GUEST;
+    }
+
+    /**
+     * Une utilisateur peut avoir plusieurs réservations.
+     */
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }

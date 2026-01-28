@@ -1,75 +1,118 @@
 @extends('layouts.app')
 
+@push('styles')
+    @vite(['resources/css/resources/index.css'])
+@endpush
+
 @section('content')
-{{-- En-tête simplifié : Le bouton d'ajout a été supprimé ici --}}
-<div class="card" style="margin-bottom: 2rem;">
-    <div style="display: flex; flex-direction: column; align-items: flex-start;">
-        <h1 class="title-gradient">Catalogue des Ressources</h1>
-        <p style="color: var(--text-muted);">Consultez la disponibilité en temps réel du Data Center.</p>
-    </div>
-</div>
-
-<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
-    @foreach($resources as $resource)
-    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+    <div class="page-header resource-catalog-header">
         <div>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                <h3 style="color: white;">{{ $resource->name }}</h3>
-                <span class="badge {{ $resource->status === 'disponible' ? 'badge-approved' : 'badge-rejected' }}">
-                    {{ $resource->status }}
-                </span>
-            </div>
-
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">
-                {{ $resource->type }} | {{ $resource->category }}
-            </p>
-
-            <table style="font-size: 0.9rem; margin-bottom: 20px; color: white; width: 100%;">
-                <tr><td><strong>CPU</strong></td><td>{{ $resource->cpu }} Cores</td></tr>
-                <tr><td><strong>RAM</strong></td><td>{{ $resource->ram }} Go</td></tr>
-            </table>
+            <h1 class="page-title">Catalogue des <span>Ressources</span></h1>
+            <p class="page-subtitle resource-catalog-subtitle">Consultez la disponibilité en temps réel du Data Center.</p>
         </div>
+    </div>
 
-        <div>
-            {{-- Section Réservation --}}
-            <div style="text-align: center; border-top: 1px solid var(--glass-border); padding-top: 15px; margin-bottom: 15px;">
-                @auth
-                    @if(auth()->user()->role === 'user')
-                        @if($resource->status === 'disponible')
-                            <a href="{{ route('reservations.create', ['resource' => $resource->id]) }}" class="btn-primary" style="display: block; text-decoration: none;">Réserver</a>
-                        @else
-                            <button class="btn" style="width: 100%; background: #334155; color: #94a3b8; cursor: not-allowed;" disabled>Indisponible</button>
-                        @endif
-                    @else
-                        {{-- Message pour Admin/Responsable : Indique qu'ils sont en mode vue --}}
-                        <p style="color: var(--text-muted); font-size: 0.8rem; font-style: italic;">Mode consultation (Gestion via "Ma Gestion")</p>
-                    @endif
-                @else
-                    {{-- Mode Invité --}}
-                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
-                        <p style="color: #818cf8; font-size: 0.85rem; margin-bottom: 5px;">Mode Lecture Seule</p>
-                        <a href="{{ route('login') }}" style="color: white; font-size: 0.8rem; text-decoration: underline;">Connectez-vous pour réserver</a>
+    <!-- Layout switched to single column for Wide Cards to match previous experience -->
+    <div class="resource-list-vertical">
+        @foreach($resources as $resource)
+            <div class="card">
+                <div class="card-body">
+                    <!-- HEADER: Name & Status -->
+                    <div class="resource-card-header">
+                        <div>
+                            <h3 class="card-title resource-card-title">{{ $resource->name }}</h3>
+                            <p class="resource-card-meta">
+                                <i class="fas fa-server"></i>
+                                {{ $resource->type }} &bullet; {{ $resource->category }}
+                            </p>
+                        </div>
+                        @php
+                            $badgeClass = match ($resource->status) {
+                                'disponible' => 'badge-success',
+                                'maintenance' => 'badge-warning',
+                                'réservé' => 'badge-info',
+                                default => 'badge-danger'
+                            };
+                        @endphp
+                        <span class="badge {{ $badgeClass }}">
+                            {{ ucfirst($resource->status) }}
+                        </span>
                     </div>
-                @endauth
-            </div>
 
-            {{-- Section Signalement (Utilisateur Uniquement) --}}
-            @auth
-                @if(auth()->user()->role === 'user')
-                <div style="background: rgba(244, 63, 94, 0.05); border: 1px solid rgba(244, 63, 94, 0.2); padding: 12px; border-radius: 12px; margin-top: 10px;">
-                    <h4 style="color: var(--accent-red); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px;">⚠️ Signaler un incident</h4>
-                    <form action="{{ route('incidents.store') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="resource_id" value="{{ $resource->id }}">
-                        <input type="text" name="subject" placeholder="Sujet" required style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 6px; border-radius: 6px; margin-bottom: 5px; font-size: 0.8rem;">
-                        <textarea name="description" placeholder="Détails..." required style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 6px; border-radius: 6px; font-size: 0.8rem; height: 50px; resize: none;"></textarea>
-                        <button type="submit" class="logout-btn" style="width: 100%; margin-top: 8px; padding: 8px; font-size: 0.75rem; font-weight: bold;">Signaler</button>
-                    </form>
+                    <!-- SPECS -->
+                    <div class="resource-card-specs">
+                        <div class="spec-item">
+                            <i class="fas fa-microchip"></i>
+                            <span class="spec-value">{{ $resource->cpu }}</span> <span class="spec-label">Cores</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-memory"></i>
+                            <span class="spec-value">{{ $resource->ram }}</span> <span class="spec-label">Go RAM</span>
+                        </div>
+                    </div>
+
+                    <!-- ACTIONS AREA -->
+                    <div class="resource-actions-area">
+                        <!-- RESERVATION ACTION -->
+                        @auth
+                            @if(auth()->user()->role === 'user')
+                                @if($resource->status === 'disponible')
+                                    <a href="{{ route('reservations.create', ['resource' => $resource->id]) }}"
+                                        class="btn btn-primary btn-full-width">
+                                        <i class="fas fa-calendar-plus"></i> Réserver
+                                    </a>
+                                @else
+                                    <button class="btn btn-unavailable" disabled>
+                                        <i class="fas fa-ban"></i> Indisponible
+                                    </button>
+                                @endif
+                            @elseif(auth()->user()->role === 'admin' || auth()->user()->role === 'responsable')
+                                <div class="admin-action-container">
+                                    <a href="{{ route('resources.manager') }}" class="btn btn-success btn-full-width">
+                                        <i class="fas fa-cog"></i> Gérer
+                                    </a>
+                                    <p class="resource-card-meta" style="margin-top: 5px; font-size: 0.8rem;">Mode consultation</p>
+                                </div>
+                            @endif
+                        @else
+                            <div class="guest-login-notice">
+                                <a href="{{ route('login') }}" class="guest-login-link">
+                                    Connectez-vous pour réserver
+                                </a>
+                            </div>
+                        @endauth
+
+                        <!-- INCIDENT REPORTING FORM -->
+                        @auth
+                            @if(auth()->user()->role === 'user')
+                                <div class="incident-report-container">
+                                    <h4 class="incident-report-title">
+                                        <i class="fas fa-exclamation-triangle"></i> Signaler un incident
+                                    </h4>
+                                    <form action="{{ route('incidents.store') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="resource_id" value="{{ $resource->id }}">
+
+                                        <div class="incident-form-group">
+                                            <input type="text" name="subject" placeholder="Sujet de l'incident" required
+                                                class="incident-input">
+                                        </div>
+
+                                        <div class="incident-form-group-last">
+                                            <textarea name="description" placeholder="Décrivez le problème en détail..." required
+                                                class="incident-textarea"></textarea>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-incident-submit">
+                                            <i class="fas fa-paper-plane"></i> Envoyer le signalement
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        @endauth
+                    </div>
                 </div>
-                @endif
-            @endauth
-        </div>
+            </div>
+        @endforeach
     </div>
-    @endforeach
-</div>
 @endsection

@@ -1,76 +1,72 @@
 @extends('layouts.app')
 
+@push('styles')
+    @vite(['resources/css/dashboard.css', 'resources/css/resources/manager.css'])
+@endpush
+
 @section('content')
-<div class="main-content">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div class="page-header manager-header manager-view">
         <div>
-            <h1 style="color: var(--accent-blue); font-size: 2.5rem;">Mon Parc <span style="color: white;">Informatique</span></h1>
-            <p style="color: var(--text-muted);">Gérez la disponibilité technique de vos ressources en temps réel.</p>
+            <h1 class="page-title">Mon Parc <span>Informatique</span></h1>
+            <p class="page-subtitle manager-subtitle">Gérez la disponibilité technique de vos ressources en temps réel.</p>
         </div>
         {{-- Bouton d'ajout stylisé --}}
         <a href="{{ route('resources.create') }}" class="btn btn-primary">
-            + Ajouter une ressource
+            <i class="fas fa-plus"></i> Ajouter une ressource
         </a>
     </div>
 
-    <div class="stats-grid">
+    <div class="resource-list manager-view">
         @foreach($resources as $resource)
             <div class="card">
-                <div style="margin-bottom: 15px;">
-                    <span class="badge {{ $resource->status === 'disponible' ? 'badge-approved' : 'badge-pending' }}" 
-                          style="background-color: {{ $resource->status === 'disponible' ? 'var(--accent-green)' : 'var(--accent-orange)' }}; color: #000; padding: 5px 10px; border-radius: 6px; font-weight: bold; font-size: 0.7rem;">
-                        {{ strtoupper($resource->status) }}
-                    </span>
-                </div>
+                <div class="card-body">
+                    <!-- HEADER: Name & Status -->
+                    <div class="resource-card-header">
+                        <div>
+                            <h3 class="card-title resource-title">{{ $resource->name }}</h3>
+                            <p class="resource-meta">
+                                <i class="fas fa-server"></i>
+                                {{ $resource->category ?? 'Serveur' }} • {{ $resource->type ?? 'Physique' }}
+                            </p>
+                        </div>
+                        <span class="badge {{ $resource->status === 'disponible' ? 'badge-success' : 'badge-warning' }}">
+                            {{ strtoupper($resource->status) }}
+                        </span>
+                    </div>
 
-                <div class="resource-header">
-                    <h3 style="color: white; margin-bottom: 5px;">{{ $resource->name }}</h3>
-                    <p style="color: var(--accent-blue); font-size: 0.9rem; margin-bottom: 15px;">{{ $resource->type }}</p>
-                </div>
-                
-                <div class="resource-body">
-                    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
-                        <li style="margin-bottom: 8px; color: var(--text-muted);">
-                            ⚡ CPU : <strong style="color: white;">{{ $resource->cpu }} Coeurs</strong>
-                        </li>
-                        <li style="margin-bottom: 8px; color: var(--text-muted);">
-                            💾 RAM : <strong style="color: white;">{{ $resource->ram }} Go</strong>
-                        </li>
-                    </ul>
-                </div>
+                    <!-- SPECS -->
+                    <div class="resource-specs">
+                        <div class="spec-item">
+                            <i class="fas fa-microchip"></i>
+                            <span class="spec-value">{{ $resource->cpu }}</span>
+                            <span class="spec-label">Cores</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-memory"></i>
+                            <span class="spec-value">{{ $resource->ram }}</span>
+                            <span class="spec-label">Go RAM</span>
+                        </div>
+                    </div>
 
-                <div class="resource-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
-                    <form action="{{ route('resources.toggleMaintenance', $resource->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="btn {{ $resource->status === 'maintenance' ? 'btn-success' : 'btn-warning' }}" style="font-size: 0.8rem; padding: 8px 12px;">
-                            {{ $resource->status === 'maintenance' ? 'Remettre en service' : 'Mettre en maintenance' }}
-                        </button>
-                    </form>
+                    <!-- ACTIONS AREA -->
+                    <div class="resource-actions">
+                        <form action="{{ route('resources.toggleMaintenance', $resource->id) }}" method="POST">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit"
+                                class="btn {{ $resource->status === 'maintenance' ? 'btn-success' : 'btn-warning' }} btn-maintenance-toggle">
+                                <i
+                                    class="fas {{ $resource->status === 'maintenance' ? 'fa-check' : 'fa-wrench' }} icon-margin"></i>
+                                {{ $resource->status === 'maintenance' ? 'Remettre en service' : 'Mettre en maintenance' }}
+                            </button>
+                        </form>
 
-                    {{-- BOUTON MODIFIER STYLISÉ --}}
-                    <a href="{{ route('resources.edit', $resource->id) }}" 
-                       style="
-                        display: inline-block;
-                        padding: 8px 16px;
-                        background: rgba(99, 102, 241, 0.1);
-                        border: 1px solid #6366f1;
-                        border-radius: 6px;
-                        color: #6366f1;
-                        font-size: 0.85rem;
-                        font-weight: 600;
-                        text-decoration: none;
-                        text-transform: uppercase;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);"
-                       onmouseover="this.style.background='#6366f1'; this.style.color='white'; this.style.boxShadow='0 0 15px rgba(99, 102, 241, 0.5)';"
-                       onmouseout="this.style.background='rgba(99, 102, 241, 0.1)'; this.style.color='#6366f1'; this.style.boxShadow='0 0 10px rgba(99, 102, 241, 0.2)';"
-                    >
-                        Modifier
-                    </a>
+                        <a href="{{ route('resources.edit', $resource->id) }}" class="btn btn-primary btn-edit-resource">
+                            <i class="fas fa-cog icon-margin"></i> Modifier
+                        </a>
+                    </div>
                 </div>
             </div>
         @endforeach
     </div>
-</div>
 @endsection

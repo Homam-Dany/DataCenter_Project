@@ -10,39 +10,34 @@ use Illuminate\Support\Facades\Auth;
 
 class ResourceController extends Controller
 {
-   public function index(Request $request)
-{
-    $query = Resource::query();
-    
-    if ($request->filled('type')) {
-        $query->where('type', $request->type);
-    }
-    
-    if ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
-
-    $resources = $query->get(); // On récupère TOUTES les ressources pour la boucle
-    return view('resources.index', compact('resources'));
-}
-
-    public function rules()
+    public function index(Request $request)
     {
-        return view('resources.rules');
+        $query = Resource::query();
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $resources = $query->get(); // On récupère TOUTES les ressources pour la boucle
+        return view('resources.index', compact('resources'));
     }
 
-   public function managerIndex()
-{
-    if (Auth::user()->role === 'admin') {
-        // L'admin voit tout le catalogue (Point 4.2)
-        $resources = Resource::with('manager')->get();
-    } else {
-        // Le responsable ne voit que ses ressources (Point 3.1)
-        $resources = Resource::where('manager_id', Auth::id())->get();
-    }
+    public function managerIndex()
+    {
+        if (Auth::user()->role === 'admin') {
+            // L'admin voit tout le catalogue (Point 4.2)
+            $resources = Resource::with('manager')->get();
+        } else {
+            // Le responsable ne voit que ses ressources (Point 3.1)
+            $resources = Resource::where('manager_id', Auth::id())->get();
+        }
 
-    return view('resources.manager', compact('resources'));
-}
+        return view('resources.manager', compact('resources'));
+    }
 
     public function create()
     {
@@ -50,28 +45,28 @@ class ResourceController extends Controller
         return view('resources.create', compact('managers'));
     }
 
-   public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'type' => 'required|string',
-        'cpu' => 'required|integer',
-        'ram' => 'required|integer',
-        'category' => 'required|string',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'type' => 'required|string',
+            'cpu' => 'required|integer',
+            'ram' => 'required|integer',
+            'category' => 'required|string',
+        ]);
 
-    Resource::create([
-        'name' => $request->name,
-        'type' => $request->type,
-        'cpu' => $request->cpu,
-        'ram' => $request->ram,
-        'category' => $request->category,
-        'status' => 'disponible',
-        'manager_id' => auth()->id(), // Le créateur devient le manager
-    ]);
+        Resource::create([
+            'name' => $request->name,
+            'type' => $request->type,
+            'cpu' => $request->cpu,
+            'ram' => $request->ram,
+            'category' => $request->category,
+            'status' => 'disponible',
+            'manager_id' => auth()->id(), // Le créateur devient le manager
+        ]);
 
-    return redirect()->route('resources.index')->with('success', 'Ressource ajoutée au parc.');
-}
+        return redirect()->route('resources.index')->with('success', 'Ressource ajoutée au parc.');
+    }
 
     public function edit(Resource $resource)
     {
@@ -103,7 +98,11 @@ class ResourceController extends Controller
             'description' => "Modifications globales sur {$resource->name}"
         ]);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Catalogue mis à jour.');
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard')->with('success', 'Catalogue mis à jour.');
+        }
+
+        return redirect()->route('resources.manager')->with('success', 'Ressource mise à jour avec succès.');
     }
 
     public function toggleMaintenance(Resource $resource)
