@@ -22,7 +22,7 @@ class ReservationController extends Controller
         $query = Reservation::where('user_id', Auth::id())->with('resource');
 
         if ($request->filled('resource')) {
-            $query->whereHas('resource', function($q) use ($request) {
+            $query->whereHas('resource', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->resource . '%');
             });
         }
@@ -33,7 +33,7 @@ class ReservationController extends Controller
 
         if ($request->filled('date')) {
             $query->whereDate('start_date', '<=', $request->date)
-                  ->whereDate('end_date', '>=', $request->date);
+                ->whereDate('end_date', '>=', $request->date);
         }
 
         $allReservations = $query->orderBy('start_date', 'desc')->get();
@@ -54,17 +54,17 @@ class ReservationController extends Controller
     {
         $resources = Resource::where('manager_id', Auth::id())->get();
 
-        $pendingReservations = Reservation::whereHas('resource', function($query) {
+        $pendingReservations = Reservation::whereHas('resource', function ($query) {
             // Un admin voit tout, un responsable voit ses ressources
             if (!auth()->user()->isAdmin()) {
                 $query->where('manager_id', Auth::id());
             }
         })
-        ->where('status', 'en_attente')
-        ->with(['resource', 'user'])
-        ->get();
+            ->where('status', 'en_attente')
+            ->with(['resource', 'user'])
+            ->get();
 
-        return view('reservations.manager_decisions', compact('resources', 'pendingReservations'));
+        return view('reservations.manager', compact('resources', 'pendingReservations'));
     }
 
     public function create()
@@ -82,7 +82,18 @@ class ReservationController extends Controller
         $request->validate([
             'resource_id' => 'required|exists:resources,id',
             'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
+            'end_date' => [
+                'required',
+                'date',
+                'after:start_date',
+                function ($attribute, $value, $fail) use ($request) {
+                    $start = \Carbon\Carbon::parse($request->start_date);
+                    $end = \Carbon\Carbon::parse($value);
+                    if ($start->diffInDays($end) > 15) {
+                        $fail('La réservation est limitée à 15 jours maximum pour garantir un partage équitable.');
+                    }
+                },
+            ],
             'justification' => 'required|string|min:10|max:1000',
         ]);
 
@@ -95,7 +106,7 @@ class ReservationController extends Controller
             ->where('status', 'Approuvée')
             ->where(function ($query) use ($request) {
                 $query->whereBetween('start_date', [$request->start_date, $request->end_date])
-                      ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
             })->exists();
 
         if ($hasConflict) {
@@ -116,7 +127,8 @@ class ReservationController extends Controller
         foreach ($responsables as $resp) {
             try {
                 $resp->notify(new NewReservationNotification($reservation));
-            } catch (\Exception $e) { }
+            } catch (\Exception $e) {
+            }
         }
 
         Log::create([
@@ -134,7 +146,7 @@ class ReservationController extends Controller
     public function decide(Request $request, $id, $action)
     {
         $reservation = Reservation::findOrFail($id);
-        
+
         // Autorisation : Manager de la ressource OU Admin
         if (auth()->id() !== $reservation->resource->manager_id && !auth()->user()->isAdmin()) {
             abort(403, "Vous n'êtes pas autorisé à prendre cette décision.");
@@ -161,11 +173,12 @@ class ReservationController extends Controller
         // Notification de l'utilisateur de la décision finale
         try {
             $reservation->user->notify(new ReservationStatusNotification($reservation));
-        } catch (\Exception $e) { }
+        } catch (\Exception $e) {
+        }
 
         // Marquer la notification du gestionnaire comme lue pour cette demande
         auth()->user()->unreadNotifications
-            ->where('data.reservation_id', (int)$id)
+            ->where('data.reservation_id', (int) $id)
             ->markAsRead();
 
         return back()->with('success', $msg);
@@ -183,11 +196,11 @@ class ReservationController extends Controller
 
     public function history()
     {
-        $reservations = Reservation::whereHas('resource', function($query) {
-                if (!auth()->user()->isAdmin()) {
-                    $query->where('manager_id', Auth::id());
-                }
-            })
+        $reservations = Reservation::whereHas('resource', function ($query) {
+            if (!auth()->user()->isAdmin()) {
+                $query->where('manager_id', Auth::id());
+            }
+        })
             ->whereIn('status', ['Approuvée', 'Refusée', 'Terminée'])
             ->with(['resource', 'user'])
             ->orderBy('updated_at', 'desc')

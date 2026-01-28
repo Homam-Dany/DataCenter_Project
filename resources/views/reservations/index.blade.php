@@ -1,115 +1,179 @@
 @extends('layouts.app')
 
+@push('styles')
+    @vite(['resources/css/reservations/index.css'])
+@endpush
+
 @section('content')
-<div class="container" style="margin-top: 30px; max-width: 1000px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+    <div class="page-header res-index-header">
         <div>
-            <h1 class="logo-text">Mon Historique <span>Data Center</span></h1>
-            <p style="color: var(--text-muted);">Consultez et filtrez vos réservations passées et en cours.</p>
+            <h1 class="page-title">Mon Historique <span>Data Center</span></h1>
+            <p class="page-subtitle res-index-subtitle">Consultez et filtrez vos réservations passées et en cours.</p>
         </div>
-        <a href="{{ route('reservations.create') }}" class="btn-primary" style="text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 600;">Nouvelle Réservation</a>
+        <a href="{{ route('reservations.create') }}" class="btn btn-primary btn-new-res">
+            <i class="fas fa-plus-circle"></i> Nouvelle Réservation
+        </a>
     </div>
 
-    <div class="card" style="background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; margin-bottom: 30px;">
-        <form action="{{ route('reservations.index') }}" method="GET" style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
-            
-            <div style="flex: 1; min-width: 200px;">
-                <label style="color: #818cf8; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: block;">Ressource</label>
-                <input type="text" name="resource" value="{{ request('resource') }}" placeholder="Ex: Serveur AI..." 
-                       style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 8px; outline: none;">
-            </div>
+    <div class="card filter-card">
+        <div class="card-body">
+            <form action="{{ route('reservations.index') }}" method="GET" class="filter-form">
 
-            <div style="flex: 1; min-width: 150px;">
-                <label style="color: #818cf8; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: block;">État</label>
-                <select name="status" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 8px; outline: none; cursor: pointer;">
-                    <option value="">Tous les états</option>
-                    <option value="en_attente" {{ request('status') == 'en_attente' ? 'selected' : '' }}>En attente</option>
-                    <option value="Approuvée" {{ request('status') == 'Approuvée' ? 'selected' : '' }}>Approuvée</option>
-                    <option value="Refusée" {{ request('status') == 'Refusée' ? 'selected' : '' }}>Refusée</option>
-                    <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
-                    <option value="Terminée" {{ request('status') == 'Terminée' ? 'selected' : '' }}>Terminée</option>
-                </select>
-            </div>
-
-            <div style="flex: 1; min-width: 150px;">
-                <label style="color: #818cf8; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: block;">Date</label>
-                <input type="date" name="date" value="{{ request('date') }}" 
-                       style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px; border-radius: 8px; outline: none;">
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn-primary" style="padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none;">Filtrer</button>
-                <a href="{{ route('reservations.index') }}" class="btn" style="background: rgba(255,255,255,0.1); color: white; padding: 10px 15px; border-radius: 8px; text-decoration: none; font-size: 0.9rem;">Reset</a>
-            </div>
-        </form>
-    </div>
-
-    <div class="grid" style="display: grid; gap: 20px;">
-        @forelse($allReservations as $res)
-            <div class="card" style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.1); padding: 20px; border-radius: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div>
-                        <h3 style="color: #818cf8; margin: 0;">{{ $res->resource->name }}</h3>
-                        <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">
-                            <strong>Période :</strong> Du {{ $res->start_date->format('d/m/Y') }} au {{ $res->end_date->format('d/m/Y') }}
-                        </p>
-                    </div>
-                    
-                    @php
-                        $badgeColor = '#f59e0b';
-                        $statusLabel = $res->status;
-
-                        if($res->status == 'Approuvée' && now()->between($res->start_date, $res->end_date)) {
-                            $badgeColor = '#3b82f6';
-                            $statusLabel = 'Active';
-                        } elseif($res->status == 'Approuvée') {
-                            $badgeColor = '#10b981';
-                        } elseif($res->status == 'Terminée') {
-                            $badgeColor = '#64748b';
-                        } elseif($res->status == 'Refusée') {
-                            $badgeColor = '#f43f5e';
-                        }
-                    @endphp
-
-                    <span style="background: {{ $badgeColor }}; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
-                        {{ $statusLabel }}
-                    </span>
+                <div class="filter-group-wide">
+                    <label class="filter-label">
+                        <i class="fas fa-server"></i> Ressource
+                    </label>
+                    <input type="text" name="resource" value="{{ request('resource') }}" placeholder="Ex: Serveur AI..."
+                        class="filter-input">
                 </div>
 
-                <div style="margin-top: 15px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; border-left: 3px solid #818cf8;">
-                    <strong style="color: #818cf8; font-size: 0.75rem; text-transform: uppercase;">Justification fournie :</strong>
-                    <p style="color: #cbd5e1; font-size: 0.85rem; margin-top: 6px; font-style: italic; line-height: 1.4;">"{{ $res->justification }}"</p>
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <i class="fas fa-filter"></i> État
+                    </label>
+                    <select name="status" class="filter-select">
+                        <option value="">Tous les états</option>
+                        <option value="en_attente" {{ request('status') == 'en_attente' ? 'selected' : '' }}>En attente
+                        </option>
+                        <option value="Approuvée" {{ request('status') == 'Approuvée' ? 'selected' : '' }}>Approuvée</option>
+                        <option value="Refusée" {{ request('status') == 'Refusée' ? 'selected' : '' }}>Refusée</option>
+                        <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
+                        <option value="Terminée" {{ request('status') == 'Terminée' ? 'selected' : '' }}>Terminée</option>
+                    </select>
                 </div>
 
-                {{-- NOUVEAU : Affichage du motif de refus (Point 2.3 et 3.3) --}}
-                @if($res->status == 'Refusée' && $res->rejection_reason)
-                    <div style="margin-top: 15px; background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.2); padding: 12px; border-radius: 10px; border-left: 3px solid #f43f5e;">
-                        <strong style="color: #f43f5e; font-size: 0.75rem; text-transform: uppercase;">Motif du refus :</strong>
-                        <p style="color: #fca5a5; font-size: 0.85rem; margin-top: 6px; font-style: italic;">"{{ $res->rejection_reason }}"</p>
-                    </div>
-                @endif
+                <div class="filter-group">
+                    <label class="filter-label">
+                        <i class="far fa-calendar-alt"></i> Date
+                    </label>
+                    <input type="date" name="date" value="{{ request('date') }}" class="filter-input">
+                </div>
 
-                <div style="margin-top: 15px; display: flex; justify-content: flex-end; gap: 15px; align-items: center;">
-                    <a href="#" title="Signaler un incident" style="color: #f59e0b; text-decoration: none; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
-                        ⚠️ <span style="text-decoration: underline;">Signaler un problème</span>
+                <div class="filter-actions">
+                    <button type="submit" class="btn btn-primary btn-new-res">
+                        <i class="fas fa-search"></i> Filtrer
+                    </button>
+                    <a href="{{ route('reservations.index') }}" class="btn-reset-filter">
+                        <i class="fas fa-undo icon-margin"></i> Reset
                     </a>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                    @if($res->status == 'en_attente')
-                        <form action="{{ route('reservations.destroy', $res->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment annuler cette demande ?')">
-                            @csrf @method('DELETE')
-                            <button type="submit" style="background: none; border: none; color: #f43f5e; cursor: pointer; font-size: 0.8rem; text-decoration: underline; font-weight: 600;">
-                                Annuler la demande
-                            </button>
-                        </form>
+    <div class="res-grid">
+        @forelse($allReservations as $res)
+            <div class="card res-card-item">
+                <div class="card-body">
+                    <div class="res-card-header-flex">
+                        <div>
+                            <h3 class="res-card-title-text">{{ $res->resource->name }}</h3>
+                            <p class="res-card-period">
+                                <i class="far fa-clock"></i> <strong>Période :</strong> Du
+                                {{ $res->start_date->format('d/m/Y') }} au {{ $res->end_date->format('d/m/Y') }}
+                            </p>
+                        </div>
+
+                        @php
+                            $badgeClass = 'badge-warning'; // Fallback
+                            $statusLabel = $res->status;
+
+                            if ($res->status == 'Approuvée' && now()->between($res->start_date, $res->end_date)) {
+                                $badgeClass = 'badge-success';
+                                $statusLabel = 'Active';
+                            } elseif ($res->status == 'Approuvée') {
+                                $badgeClass = 'badge-success';
+                            } elseif ($res->status == 'Terminée') {
+                                $badgeClass = 'badge-secondary';
+                            } elseif ($res->status == 'Refusée') {
+                                $badgeClass = 'badge-danger';
+                            } elseif ($res->status == 'en_attente') {
+                                $badgeClass = 'badge-warning';
+                            }
+                        @endphp
+
+                        <span class="badge {{ $badgeClass }}">
+                            {{ $statusLabel }}
+                        </span>
+                    </div>
+
+                    <div class="res-info-segment">
+                        <strong class="res-info-label">Justification fournie :</strong>
+                        <p class="res-info-text">"{{ $res->justification }}"</p>
+                    </div>
+
+                    {{-- Motif de refus --}}
+                    @if($res->status == 'Refusée' && $res->rejection_reason)
+                        <div class="res-rejection-segment">
+                            <strong class="res-rejection-label">Motif du refus :</strong>
+                            <p class="res-rejection-text">"{{ $res->rejection_reason }}"</p>
+                        </div>
                     @endif
+
+                    <div class="res-card-actions">
+                        <a href="#" title="Signaler un incident" class="btn-report-problem"
+                            data-resource-id="{{ $res->resource->id }}">
+                            <i class="fas fa-exclamation-triangle"></i> Signaler un problème
+                        </a>
+
+                        @if($res->status == 'en_attente')
+                            <form action="{{ route('reservations.destroy', $res->id) }}" method="POST"
+                                onsubmit="return confirm('Voulez-vous vraiment annuler cette demande ?')" style="display: flex;">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn-cancel-reservation">
+                                    <i class="fas fa-times-circle"></i> Annuler la demande
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
             </div>
         @empty
-            <div class="card" style="text-align: center; padding: 60px; color: var(--text-muted); background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 20px;">
-                <p style="font-size: 1.1rem;">🔍 Aucune réservation ne correspond à vos critères.</p>
-                <a href="{{ route('reservations.index') }}" style="color: #818cf8; text-decoration: underline; font-size: 0.9rem;">Effacer les filtres</a>
+            <div class="card res-empty-state">
+                <i class="fas fa-search res-empty-icon"></i>
+                <p class="res-empty-title">Aucune réservation ne correspond à vos critères.</p>
+                <a href="{{ route('reservations.index') }}" class="res-clear-filters">Effacer les filtres</a>
             </div>
         @endforelse
     </div>
-</div>
+
+    {{-- Modal de Signalement d'Incident --}}
+    <div id="incidentModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-exclamation-triangle" style="color: #f97316;"></i> Signaler un problème
+                </h3>
+                <button type="button" class="close-modal" id="closeIncidentModal">&times;</button>
+            </div>
+            <form action="{{ route('incidents.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="resource_id" id="modal_resource_id">
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label class="filter-label">Sujet de l'incident</label>
+                    <input type="text" name="subject" placeholder="Ex: Panne réseau, Surchauffe..." required
+                        class="form-control">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 25px;">
+                    <label class="filter-label">Description détaillée</label>
+                    <textarea name="description" placeholder="Décrivez le problème rencontré sur cette ressource..."
+                        required class="form-control" style="min-height: 120px; resize: vertical;"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 15px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" id="cancelIncidentBtn"
+                        style="background: #e2e8f0; color: #475569;">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Envoyer le signalement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    @vite(['resources/js/reservations/index.js'])
+@endpush
