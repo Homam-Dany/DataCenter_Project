@@ -107,8 +107,8 @@ For detailed technical info, refer to the [RAPPORT_TECHNIQUE.md](file:///c:/xamp
 Developed by a team of dedicated developers focused on creating efficient infrastructure management solutions.
 - **EL HAJIOUI Houssam   :** Layouts & Reservation Core
 - **DANY Homam           :** Admin System & Identity
-- **FARSSI Fatima Zahra  :** Security & Notifications
-- **EL BOURMAKI Salim    :** Resources & Content
+- **EL BOURMAKI Salim    :** Security & Notifications
+- **FARSSI Fatima Zahra  :** Resources & Content
 
 ---
 *Created for the DataCenter Management Project - 2026*
