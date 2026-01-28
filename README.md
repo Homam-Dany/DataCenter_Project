@@ -1,107 +1,104 @@
-# 🌐 DataCenter Management System
+# 🌐 DC-Manager: Data Center Management System
 
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![CSS Natif](https://img.shields.io/badge/CSS_Natif-Exclusif-blue?style=for-the-badge)
+![JS Vanilla](https://img.shields.io/badge/JS_Vanilla-ES6+-yellow?style=for-the-badge)
 
-A comprehensive web application designed for managing resource reservations, tracking incidents, and monitoring logs within a Data Center environment. Built with **Laravel 9** and modernized with **Vite**.
+**DC-Manager** is a high-compliance web solution for resource orchestration within a Data Center. It emphasizes a strict "No-Framework" policy for the frontend, demonstrating mastery of core web standards while providing a premium user experience.
+
+---
+
+## 💎 Project Identity
+
+> [!IMPORTANT]
+> This project was developed as a technical challenge with a strict **NO CSS FRAMEWORK** (no Bootstrap, no Tailwind) and **NO JQUERY** policy. Every pixel is styled with native CSS3, and every interaction is powered by Vanilla JS.
 
 ---
 
 ## ✨ Key Features
 
-### � Infrastructure Management
-- **Resource Catalogue**: Browse and manage available server racks and data center resources.
-- **Maintenance Mode**: Toggle resources in and out of maintenance to prevent unauthorized bookings.
+### 🏢 Infrastructure Management
+- **Resource Catalogue**: Comprehensive inventory of server racks and equipment.
+- **Dynamic Availability**: Impact tracking—Resource state updates automatically based on incidents.
+- **Maintenance Core**: Admin-controlled maintenance toggles.
 
-### � Reservation System
-- **Booking Flow**: Streamlined reservation process for users.
-- **Approval Workflow**: Admin/Responsable dashboard to approve, reject, or manage reservation requests with reason tracking.
-- **History Tracking**: Complete logs of past and current reservations.
+### 📅 Advanced Reservation
+- **Conflict Detection**: Real-time validation to prevent overlapping bookings.
+- **Decision Engine**: Multi-role approval workflow (Approve/Reject) with audit trails.
+- **Reservation Lifecycle**: From initial request to automated expiry warnings.
 
-### ⚠️ Incident Reporting
-- **User Alerts**: Facility for users to report technical issues immediately.
-- **Resolution Management**: Management interface to track and mark incidents as resolved.
-
-### 🔔 Smart Notifications
-- **Automated Alerts**: Real-time notifications for account activation, reservation updates, and incident status.
-- **Expiry Warnings**: Automated system to warn users before their reservations expire.
+### ⚠️ Incident Management
+- **Reporting Pipeline**: Engineers can report hardware/software incidents.
+- **Responsable Dashboard**: Centralized view for resolving technical debt.
+- **Log System**: Full traceability of administrative actions.
 
 ---
 
-## 👥 Core Roles
+## 👥 User Roles (ACL)
 
-- **Admin**: Full system control (User management, system logs, full dashboard).
-- **Responsable**: Resource management and reservation validation.
-- **User**: Catalogue browsing and resource booking.
+- **Administrateur**: Full control, user management, and detailed system logs.
+- **Responsable**: Inventory management, reservation validation, and incident resolution.
+- **Utilisateur (Ingénieur)**: Resource booking, personal dashboard, and incident reporting.
 
 ---
 
-## � Getting Started
+## 🚀 Installation & Setup
 
 ### Prerequisites
 - PHP >= 8.0
-- Composer
-- Node.js & NPM
-- MySQL
+- Composer & NPM
+- MySQL Server
 
-### Installation
+### Quick Start
 
-1. **Clone the repository**
+1. **Clone the repo**
    ```bash
    git clone https://github.com/Homam-Dany/DataCenter_Project.git
    cd DataCenter_Project
    ```
 
-2. **Install Dependencies**
+2. **Setup Dependencies**
    ```bash
    composer install
    npm install
    ```
 
-3. **Environment Setup**
+3. **Configure Environment**
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
 
-4. **Database Migration**
+4. **Initialize Database**
    ```bash
    php artisan migrate
    ```
 
-5. **Run the Application**
+5. **Launch**
    ```bash
-   # Terminal 1
+   # Terminal 1: Laravel Server
    php artisan serve
    
-   # Terminal 2
+   # Terminal 2: Asset Compiler
    npm run dev
    ```
 
 ---
 
-## � Tech Stack
+## 🤝 The Development Team
 
-- **Backend**: Laravel 9
-- **Frontend**: Blade, CSS3, JavaScript (ES6+)
-- **Build Tool**: Vite
-- **Database**: MySQL
-- **Real-time**: Laravel Notifications
+Distributed according to technical complexity and project modules:
 
----
-
-## 📄 Documentation
-For detailed technical info, refer to the [RAPPORT_TECHNIQUE.md](file:///c:/xampp/htdocs/DataCenter_Project/RAPPORT_TECHNIQUE.md) file in the root directory.
+- **Member 1 (35%)**: Layouts, Incident Management, and Responsable Dashboards.
+- **Member 2 (35%)**: Admin Suite, System Logs, and User Identity/Profiles.
+- **Member 3 (20%)**: Unified Authentication and Notification Engine.
+- **Member 4 (10%)**: "A Propos" documentation and Resource Catalogue.
 
 ---
 
-## 🤝 The Team
-Developed by a team of dedicated developers focused on creating efficient infrastructure management solutions.
-- **Member 1**: Layouts & Reservation Core
-- **Member 2**: Admin System & Identity
-- **Member 3**: Security & Notifications
-- **Member 4**: Resources & Content
+## 📄 Compliance Info
+For the full compliance audit, see [RAPPORT_TECHNIQUE.md](file:///c:/xampp/htdocs/DataCenter_Project/RAPPORT_TECHNIQUE.md).
 
 ---
-*Created for the DataCenter Management Project - 2026*
+*Developed for Data Center Excellence - 2026*
