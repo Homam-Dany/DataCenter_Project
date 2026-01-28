@@ -87,8 +87,12 @@ Cette application respecte des contraintes strictes pour démontrer une expertis
 
 ## 👥 Équipe
 
-- **Dany Homam** — *Lead Fullstack Developer & Architecte*
+## 👥 Équipe
 
+- **Homam Dany**
+- **Houssam ElHAJIOUI**
+- **Fatima Zahra Farssi**
+- **Salim El Bourmaki**
 ---
 
 <div align="center">
