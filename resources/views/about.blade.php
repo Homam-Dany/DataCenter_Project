@@ -60,7 +60,7 @@
     <div class="team-grid">
         <div class="team-card animate-card">
             <div class="image-wrapper">
-                <img src="{{ asset('images/team/salim.jpg') }}" alt="El Bourmaki Salim" onerror="this.src='https://ui-avatars.com/api/?name=Salim+El+Bourmaki&background=818cf8&color=fff'">
+                <img src="{{ asset('images/team/salim.png') }}" alt="El Bourmaki Salim" onerror="this.src='https://ui-avatars.com/api/?name=Salim+El+Bourmaki&background=818cf8&color=fff'">
             </div>
             <h3>El Bourmaki Salim</h3>
             <p class="role">Responsable Technique</p>
