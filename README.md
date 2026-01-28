@@ -18,20 +18,22 @@
 
 ## ✨ Key Features
 
-### 🏢 Infrastructure Management
-- **Resource Catalogue**: Comprehensive inventory of server racks and equipment.
-- **Dynamic Availability**: Impact tracking—Resource state updates automatically based on incidents.
-- **Maintenance Core**: Admin-controlled maintenance toggles.
+### � Infrastructure Management
+- **Resource Catalogue**: Browse and manage available server racks and data center resources.
+- **Maintenance Mode**: Toggle resources in and out of maintenance to prevent unauthorized bookings.
 
-### 📅 Advanced Reservation
-- **Conflict Detection**: Real-time validation to prevent overlapping bookings.
-- **Decision Engine**: Multi-role approval workflow (Approve/Reject) with audit trails.
-- **Reservation Lifecycle**: From initial request to automated expiry warnings.
+### � Reservation System
+- **Booking Flow**: Streamlined reservation process for users.
+- **Approval Workflow**: Admin/Responsable dashboard to approve, reject, or manage reservation requests with reason tracking.
+- **History Tracking**: Complete logs of past and current reservations.
 
-### ⚠️ Incident Management
-- **Reporting Pipeline**: Engineers can report hardware/software incidents.
-- **Responsable Dashboard**: Centralized view for resolving technical debt.
-- **Log System**: Full traceability of administrative actions.
+### ⚠️ Incident Reporting
+- **User Alerts**: Facility for users to report technical issues immediately.
+- **Resolution Management**: Management interface to track and mark incidents as resolved.
+
+### 🔔 Smart Notifications
+- **Automated Alerts**: Real-time notifications for account activation, reservation updates, and incident status.
+- **Expiry Warnings**: Automated system to warn users before their reservations expire.
 
 ---
 
@@ -43,16 +45,16 @@
 
 ---
 
-## 🚀 Installation & Setup
+## � Getting Started
 
 ### Prerequisites
 - PHP >= 8.0
 - Composer & NPM
 - MySQL Server
 
-### Quick Start
+### Installation
 
-1. **Clone the repo**
+1. **Clone the repository**
    ```bash
    git clone https://github.com/Homam-Dany/DataCenter_Project.git
    cd DataCenter_Project
@@ -75,7 +77,7 @@
    php artisan migrate
    ```
 
-5. **Launch**
+5. **Run the Application**
    ```bash
    # Terminal 1: Laravel Server
    php artisan serve
@@ -86,19 +88,27 @@
 
 ---
 
-## 🤝 The Development Team
+## � Tech Stack
 
-Distributed according to technical complexity and project modules:
+- **Backend**: Laravel 9
+- **Frontend**: Blade, CSS3, JavaScript (ES6+)
+- **Build Tool**: Vite
+- **Database**: MySQL
+- **Real-time**: Laravel Notifications
 
-- **Member 1 (35%)**: Layouts, Incident Management, and Responsable Dashboards.
-- **Member 2 (35%)**: Admin Suite, System Logs, and User Identity/Profiles.
-- **Member 3 (20%)**: Unified Authentication and Notification Engine.
-- **Member 4 (10%)**: "A Propos" documentation and Resource Catalogue.
+---
+
+## 📄 Documentation
+For detailed technical info, refer to the [RAPPORT_TECHNIQUE.md](file:///c:/xampp/htdocs/DataCenter_Project/RAPPORT_TECHNIQUE.md) file in the root directory.
 
 ---
 
-## 📄 Compliance Info
-For the full compliance audit, see [RAPPORT_TECHNIQUE.md](file:///c:/xampp/htdocs/DataCenter_Project/RAPPORT_TECHNIQUE.md).
+## 🤝 The Team
+Developed by a team of dedicated developers focused on creating efficient infrastructure management solutions.
+- **EL HAJIOUI Houssam**: Layouts & Reservation Core
+- **DANYHomam**: Admin System & Identity
+- **FARSSI Fatima Zahra**: Security & Notifications
+- **EL BOURMAKI Salim**: Resources & Content
 
 ---
-*Developed for Data Center Excellence - 2026*
+*Created for the DataCenter Management Project - 2026*
