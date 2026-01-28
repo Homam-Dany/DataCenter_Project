@@ -95,9 +95,14 @@ Cette application respecte des contraintes strictes pour démontrer une expertis
 - **Salim El Bourmaki**
 ---
 
-<div align="center">
+div align="center">
 
 **Projet Académique d'Excellence — Université Abdelmalek Essaâdi**  
-*Département Ingénierie De Développement D'Applications Informatiques*
+*Département d'Informatique*
+
+---
+**Filiere : Ingenieurie de Developpement d'Applications Informatiques (IDAI)**
+
+---
 
 </div>
