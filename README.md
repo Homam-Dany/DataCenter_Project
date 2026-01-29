@@ -5,6 +5,10 @@
 ![CSS Natif](https://img.shields.io/badge/CSS_Natif-Exclusif-blue?style=for-the-badge)
 ![JS Vanilla](https://img.shields.io/badge/JS_Vanilla-ES6+-yellow?style=for-the-badge)
 
+Présentation live de l'application:(il faut extraire le fichier .zip d'abord)
+
+https://drive.google.com/file/d/1Pn1fC4sEydRXnY748LO7FbWTKyhv_aO1/view?usp=sharing
+
 **DC-Manager** is a high-compliance web solution for resource orchestration within a Data Center. It emphasizes a strict "No-Framework" policy for the frontend, demonstrating mastery of core web standards while providing a premium user experience.
 
 ---
